@@ -42,10 +42,9 @@ O `/here` fica muito melhor quando os agentes marcam, no momento em que acontece
 The owner is often away from a project for days while agents keep working. Leave a trail he can catch up on:
 - When you decide something that is his to decide, because waiting would block the work, write a line in your thread reply that starts with `Decidido sem o dono:`: what you chose, why it could not wait, and how to undo it.
 - When work waits on him, write a line that starts with `Aguarda o dono:`: what is blocked and the exact answer or action you need. Keep working on everything that does not depend on it.
-- When he arrives and types `/here` (`$here` on Codex) or asks what happened while he was away, use the `here` skill.
 ```
 
-A skill busca essas duas marcas em todas as threads do projeto.
+A skill busca essas duas marcas em todas as threads do projeto. Não é preciso apontar para a skill aqui: a descrição dela já faz o agente usá-la quando você digita `/here`.
 
 ## Requisitos
 
@@ -74,5 +73,7 @@ ln -s ~/dev/here-skill/skills/here ~/.agents/skills/here   # Codex: $here
 - **Shipped**, **in progress**, **incidents**, and **what keeps running without you**.
 
 Every item cites its evidence. While you're there, it acts on your answers right away. Its output language is Brazilian Portuguese; change one line to switch.
+
+A skill segue o guia [writing-for-agents](https://github.com/mattpocock/skills) do Matt Pocock: passos com critério de pronto, a página e as regras dela num arquivo carregado só quando o agente monta a página, e a descrição curta.
 
 Licença MIT.
