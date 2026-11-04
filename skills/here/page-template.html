@@ -1,0 +1,165 @@
+<!doctype html>
+<!--
+Page template for the /here skill. Copy it, replace the sample content, keep the CSS.
+
+Rules:
+- Keep every section, in this order. A section with nothing in the window shows one line in .empty ("Nada no período.").
+- Precisa de você comes first and is numbered 1..n in the same order as the chat list.
+- Every item ends with its .src: commit sha, PR/issue link or the T3 thread link exactly as T3 returned it.
+- Item text: one line on the effect for the owner. Technical detail goes in .detail.
+- Chips: .k-dec Decisão, .k-apr Aprovação, .k-acao Ação só sua, .k-op Opinião.
+  Undo cost: .rev-facil fácil, .rev-medio médio, .rev-dificil difícil. "relatado, não verificado": .unverified.
+- The timeline shows one column per day of the window (skip it for windows under 3 days).
+  Bar height = items that day, scaled to the busiest day (max 56px). Title attribute = the count.
+- Colors come only from the theme variables. No page background, no outer card, no side padding (html_render rules).
+- Never put a secret on the page.
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+  :root { --gap: 12px; }
+  body { margin: 0; font-family: var(--font-sans); color: var(--foreground); line-height: 1.45; font-size: 14px; }
+  a { color: var(--primary); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code, .src { font-family: var(--font-mono); font-size: 11.5px; }
+  .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 4px; }
+  .head h1 { font-size: 18px; margin: 0; font-weight: 650; }
+  .head .when { color: var(--muted-foreground); font-size: 13px; }
+  .scope { color: var(--muted-foreground); font-size: 12.5px; margin-bottom: 12px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 18px; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
+  .stat b { display: block; font-size: 22px; line-height: 1.1; }
+  .stat span { font-size: 12px; color: var(--muted-foreground); }
+  .stat.hot { border-color: var(--warning); background: var(--warning-surface); }
+  .stat.hot b { color: var(--warning); }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted-foreground); margin: 22px 0 8px; font-weight: 650; }
+  h2 .n { color: var(--foreground); }
+  h3 { font-size: 13.5px; margin: 14px 0 6px; font-weight: 650; }
+  .ask { display: grid; grid-template-columns: 30px 1fr; gap: 10px; background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--warning); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; }
+  .num { width: 26px; height: 26px; border-radius: 50%; background: var(--warning); color: var(--background); display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+  .ask .t { font-weight: 600; }
+  .meta { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12.5px; color: var(--muted-foreground); margin: 4px 0 6px; }
+  .opts { margin: 4px 0 6px 18px; padding: 0; font-size: 13px; }
+  .rec { background: var(--accent-surface, var(--accent)); border-radius: calc(var(--radius) - 2px); padding: 6px 10px; font-size: 13px; }
+  .rec b { color: var(--primary); }
+  .chip { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--border); margin-right: 6px; vertical-align: 1px; white-space: nowrap; }
+  .k-dec { color: var(--warning); border-color: var(--warning); }
+  .k-apr { color: var(--info); border-color: var(--info); }
+  .k-acao { color: var(--destructive); border-color: var(--destructive); }
+  .k-op { color: var(--muted-foreground); }
+  .rev-facil { color: var(--success); border-color: var(--success); }
+  .rev-medio { color: var(--warning); border-color: var(--warning); }
+  .rev-dificil { color: var(--destructive); border-color: var(--destructive); }
+  .unverified { color: var(--muted-foreground); border-style: dashed; }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { display: grid; grid-template-columns: 10px 1fr; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+  .list li:last-child { border-bottom: 0; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 7px; background: var(--chart-2); }
+  .dot.ok { background: var(--success); }
+  .dot.warn { background: var(--warning); }
+  .dot.bad { background: var(--destructive); }
+  .dot.info { background: var(--info); }
+  .detail { color: var(--muted-foreground); font-size: 12.5px; }
+  .src { color: var(--muted-foreground); margin-left: 4px; }
+  .empty { color: var(--muted-foreground); font-size: 13px; padding: 4px 0; }
+  .timeline { display: flex; align-items: flex-end; gap: 4px; height: 76px; padding-top: 4px; }
+  .day { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+  .bar { width: 100%; max-width: 28px; border-radius: 3px 3px 0 0; background: var(--chart-1); min-height: 2px; }
+  .day span { font-size: 10.5px; color: var(--muted-foreground); }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0 22px; }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>Enquanto você esteve fora</h1>
+  <span class="when">28/10 14:12 → 04/11 09:40 · 7 dias</span>
+</div>
+<div class="scope">Projeto Loja Aurora · 14 threads, 2 repositórios, o tracker, 3 tarefas agendadas e a memória do projeto · desde a sua última mensagem nesta thread</div>
+
+<div class="stats">
+  <div class="stat hot"><b>3</b><span>precisam de você</span></div>
+  <div class="stat"><b>2</b><span>decididos no seu lugar</span></div>
+  <div class="stat"><b>11</b><span>entregues</span></div>
+  <div class="stat"><b>1</b><span>incidente</span></div>
+</div>
+
+<h2>Precisa de você <span class="n">· 3</span></h2>
+
+<div class="ask">
+  <div class="num">1</div>
+  <div>
+    <div><span class="chip k-dec">Decisão</span><span class="t">Preço do plano anual do clube de assinatura</span></div>
+    <div class="meta"><span>Travado desde 30/10</span><span>Esperar custa: a página de checkout não publica</span></div>
+    <ol class="opts" type="a"><li>R$ 997 à vista, sem parcelamento</li><li>12× de R$ 97</li></ol>
+    <div class="rec"><b>Recomendo b:</b> é o formato que a campanha atual já anuncia.</div>
+    <div class="src"><a href="#">AUR-171</a> · <a href="#">t3-thread://…/checkout</a></div>
+  </div>
+</div>
+
+<div class="ask">
+  <div class="num">2</div>
+  <div>
+    <div><span class="chip k-acao">Ação só sua</span><span class="t">Código 2FA para religar a conta de anúncios</span></div>
+    <div class="meta"><span>Travado desde 02/11</span><span>Esperar custa: relatórios de anúncios parados</span></div>
+    <div class="rec"><b>2 min:</b> abrir o painel de anúncios → Segurança → aprovar o login novo.</div>
+    <div class="src"><a href="#">t3-thread://…/relatorios</a></div>
+  </div>
+</div>
+
+<h2>Decidido no seu lugar <span class="n">· 2</span></h2>
+<ul class="list">
+  <li><i class="dot warn"></i><div><span class="chip rev-facil">desfazer: fácil</span>Publicações do app passaram a sair às 04:00, fora do horário de clientes
+    <div class="detail">Thread do coordenador; não dava para esperar porque a janela da noite já estava marcada. Desfazer: mudar o agendamento.</div>
+    <span class="src"><a href="#">a1b2c3d</a></span></div></li>
+</ul>
+
+<h2>Entregue <span class="n">· 11</span></h2>
+<div class="timeline">
+  <div class="day"><div class="bar" style="height:12px" title="1"></div><span>28</span></div>
+  <div class="day"><div class="bar" style="height:56px" title="4"></div><span>29</span></div>
+  <div class="day"><div class="bar" style="height:28px" title="2"></div><span>30</span></div>
+  <div class="day"><div class="bar" style="height:2px" title="0"></div><span>31</span></div>
+  <div class="day"><div class="bar" style="height:14px" title="1"></div><span>01</span></div>
+  <div class="day"><div class="bar" style="height:28px" title="2"></div><span>02</span></div>
+  <div class="day"><div class="bar" style="height:14px" title="1"></div><span>03</span></div>
+</div>
+<div class="cols">
+  <div>
+    <h3>Funcionalidades novas</h3>
+    <ul class="list">
+      <li><i class="dot ok"></i><div>Clientes recebem o rastreio do pedido pelo WhatsApp<span class="src"><a href="#">#212</a></span>
+        <div class="detail">Webhook da transportadora → fila de mensagens → template aprovado.</div></div></li>
+    </ul>
+  </div>
+  <div>
+    <h3>Correções</h3>
+    <ul class="list">
+      <li><i class="dot ok"></i><div>Leads duplicados no CRM pararam de aparecer<span class="src"><a href="#">9f8e7d6</a></span></div></li>
+      <li><i class="dot ok"></i><div><span class="chip unverified">relatado, não verificado</span>Lentidão do painel resolvida<span class="src"><a href="#">t3-thread://…</a></span></div></li>
+    </ul>
+  </div>
+</div>
+
+<h2>Em andamento</h2>
+<ul class="list">
+  <li><i class="dot info"></i><div>Migração para o servidor novo: dados copiados, virada no domingo<span class="src"><a href="#">t3-thread://…/infra</a></span></div></li>
+</ul>
+
+<h2>Travado por outro motivo</h2>
+<div class="empty">Nada no período.</div>
+
+<h2>Incidentes</h2>
+<ul class="list">
+  <li><i class="dot bad"></i><div>Publicação interrompida em 03/11 quando o supervisor de processos fechou; refeita no mesmo dia<span class="src"><a href="#">4c5d6e7</a></span>
+    <div class="detail">Impacto: nenhum cliente; o servidor não chegou a ser tocado.</div></div></li>
+</ul>
+
+<h2>Acontece sem você</h2>
+<ul class="list">
+  <li><i class="dot"></i><div>Verificação diária da infraestrutura, todo dia 09:30<span class="src">agendada</span></div></li>
+</ul>
+
+</body>
+</html>
