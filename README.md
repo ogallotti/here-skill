@@ -1,79 +1,90 @@
 # /here
 
-Uma skill para quem trabalha com muitos agentes autônomos e passa dias sem olhar um projeto.
+An owner check-in skill for people who run many autonomous agents and go days without looking at a project.
 
-Agentes entregam funcionalidades, corrigem bugs, passam trabalho de um para o outro, decidem coisas no seu lugar e travam esperando você. Quando você volta, não dá para ler dezenas de threads. Você digita `/here` e o agente faz duas coisas:
+While you're away, agents ship features, fix bugs, hand work to each other, decide things on your behalf and stall waiting for you. When you come back, you can't read dozens of threads. You type `/here` and the agent does two things:
 
-1. **Te atualiza** com uma página visual de tudo o que aconteceu desde a sua última mensagem: o que foi entregue, o que está em andamento, o que quebrou e o que segue rodando sem você.
-2. **Te usa enquanto você está lá.** Ele lista, numerado e com recomendação, tudo o que só você destrava: decisões, aprovações, ações que só você pode fazer (senha, 2FA, pagamento) e decisões críticas que foram tomadas no seu lugar. Você responde `1 ok, 2 b, 3 depois`, e ele executa ou repassa cada resposta para o agente responsável na hora.
+1. **Catches you up** with one visual page covering everything since your last message: what shipped, what's in progress, what broke, and what keeps running without you.
+2. **Uses you while you're there.** It lists, numbered and with a recommendation each, everything only you can unblock: decisions, approvals, owner-only actions (passwords, 2FA, payments) and critical decisions agents made on your behalf. You answer `1 ok, 2 b, 3 later`, and it acts on each answer right away or relays it to the agent that owns the work.
 
-![Exemplo da página do /here](assets/exemplo.png)
+It replies in your language, whatever language you write to it in.
 
-## Como funciona
+![Example /here page](assets/example.png)
 
-1. **Janela de ausência.** Começa na sua última mensagem na thread. O T3 Code marca quem criou cada mensagem, então as mensagens de outros agentes e de tarefas agendadas não contam como presença sua. Você também pode passar a data: `/here desde 28/10` ou `/here 7d`.
-2. **Escopo.** O projeto inteiro da thread, ou o que você pedir: `/here só esta thread`, `/here tudo`.
-3. **Coleta, fonte a fonte, com prova:**
-   - threads paradas esperando aprovação;
-   - threads e delegados;
-   - commits e PRs;
-   - o tracker;
-   - tarefas agendadas;
-   - a memória do projeto.
+## How it works
 
-   Cada item traz o commit, o PR, a issue ou o link da thread que o comprova. O que só um agente afirma aparece como "relatado, não verificado".
-4. **Página.** Ela segue esta ordem:
-   - **Precisa de você**
-   - **Decidido no seu lugar**, com o custo de desfazer
-   - **Entregue**, por dia e por tipo
-   - **Em andamento**
-   - **Travado por outro motivo**
-   - **Incidentes**
-   - **Acontece sem você**
-5. **Sessão de desbloqueio.** Ele age sobre cada resposta sua enquanto você está presente.
+1. **Absence window.** Starts at your last own message in the thread. Messages from other agents, schedules and delegates don't count as you being there. You can set it: `/here since Oct 28`, `/here 7d`.
+2. **Scope.** The thread's whole project, or what you ask for: `/here this thread only`, `/here everything`.
+3. **Gather, source by source, with evidence:**
+   - threads waiting on you;
+   - the marks agents left;
+   - every active thread;
+   - commits and PRs;
+   - the tracker;
+   - scheduled jobs;
+   - the project's memory store.
 
-## O rastro que os agentes deixam
+   Every item cites its commit, PR, issue or thread. What only an agent claims is marked "reported, not verified".
+4. **Page**, in this order:
+   - **Needs you**
+   - **Decided on your behalf**, with the cost of undoing each one
+   - **Shipped**, by day and by kind
+   - **In progress**
+   - **Blocked elsewhere**
+   - **Incidents**
+   - **Runs without you**
+5. **Unblock session.** It acts on each of your answers while you're present.
 
-O `/here` fica muito melhor quando os agentes marcam, no momento em que acontece, o que é seu. Acrescente isto ao `CLAUDE.md` e ao `AGENTS.md` globais:
+## Leaving a trail
+
+`/here` works best when agents mark what's yours at the moment it happens. Add this to your global agent instructions (`CLAUDE.md`, `AGENTS.md` or your harness's equivalent):
 
 ```markdown
 ## Owner check-ins
 
-The owner is often away from a project for days while agents keep working. Leave a trail he can catch up on:
-- When you decide something that is his to decide, because waiting would block the work, write a line in your thread reply that starts with `Decidido sem o dono:`: what you chose, why it could not wait, and how to undo it.
-- When work waits on him, write a line that starts with `Aguarda o dono:`: what is blocked and the exact answer or action you need. Keep working on everything that does not depend on it.
+The owner is often away from a project for days while agents keep working. Leave a trail they can catch up on:
+- When you decide something that is theirs to decide, because waiting would block the work, write a line in your thread reply that starts with `Decided for the owner:`: what you chose, why it could not wait, and how to undo it.
+- When work waits on them, write a line that starts with `Waiting on the owner:`: what is blocked and the exact answer or action you need. Keep working on everything that does not depend on it.
 ```
 
-A skill busca essas duas marcas em todas as threads do projeto. Não é preciso apontar para a skill aqui: a descrição dela já faz o agente usá-la quando você digita `/here`.
+The skill searches every thread in the project for those two marks.
 
-## Requisitos
+## Harnesses
 
-- [T3 Code](https://github.com/pingdotgg/t3code), com as ferramentas de threads (`t3_thread_list`, `t3_thread_read`, `t3_thread_search`, `t3_thread_send`) e de página (`html_preview`, `html_render`). Sem `html_render`, a skill responde em Markdown.
-- Claude Code ou Codex.
-- Opcionais, usados quando existem: `gh` para PRs, o MCP do Linear para o tracker e [ai-memory](https://github.com/akitaonrails/ai-memory) para a memória do projeto.
+`/here` was built on [T3 Code](https://github.com/pingdotgg/t3code), where agents run as many parallel threads that message each other. There it uses everything: the sender of each message, the thread list and search, inline HTML pages, and relaying decisions to other threads.
 
-## Instalação
+It also works with [Claude Code](https://docs.claude.com/en/docs/claude-code) or [Codex](https://github.com/openai/codex) used directly, and with any harness that loads Agent Skills (`SKILL.md`).
+
+`skills/here/harnesses.md` maps the five capabilities the skill needs to each harness:
+- telling the owner's messages apart;
+- listing threads;
+- search;
+- showing a page;
+- relaying a decision.
+
+It also says what to do when one is missing. With Claude Code or Codex on their own, it reads the session transcripts, opens the page in your browser, and tells you which session to resume with which message.
+
+Optional sources, used when present: `gh` for PRs, your tracker (Linear, GitHub Issues), and a memory store such as [ai-memory](https://github.com/akitaonrails/ai-memory).
+
+## Install
 
 ```sh
 git clone https://github.com/ogallotti/here-skill ~/dev/here-skill
-ln -s ~/dev/here-skill/skills/here ~/.claude/skills/here   # Claude Code: /here
-ln -s ~/dev/here-skill/skills/here ~/.agents/skills/here   # Codex: $here
+ln -s ~/dev/here-skill/skills/here ~/.claude/skills/here   # Claude Code and T3 Code's Claude threads
+ln -s ~/dev/here-skill/skills/here ~/.agents/skills/here   # Codex and T3 Code's Codex threads
 ```
 
-## Adaptar
+Other harnesses: put `skills/here` wherever yours loads skills from.
 
-- **Idioma:** a skill escreve em português do Brasil. Troque a linha "Write everything the owner reads in Brazilian Portuguese" e as marcas `Decidido sem o dono:` e `Aguarda o dono:` para o seu idioma.
-- **Visual:** a página usa as variáveis de tema do T3 e se ajusta ao claro e ao escuro. A estrutura e as regras ficam em `skills/here/page-template.html`.
+## Files
 
----
+- `skills/here/SKILL.md`: the steps.
+- `skills/here/harnesses.md`: how each harness provides what the steps need, read once per run.
+- `skills/here/page-template.html`: the page layout and its rules. It uses the host's theme variables when they exist and its own light and dark palette otherwise.
 
-**English.** `/here` is an owner check-in skill for T3 Code (Claude Code or Codex). When you come back after days away from a project run by autonomous agents, it builds a visual report of everything since your last message:
-- **Needs you:** decisions, approvals and owner-only actions, numbered, each with a recommendation;
-- **Decided on your behalf:** with the cost of undoing each one;
-- **Shipped**, **in progress**, **incidents**, and **what keeps running without you**.
+The skill follows Matt Pocock's [writing-for-agents](https://github.com/mattpocock/skills) guide:
+- every step ends on a completion criterion;
+- material only some runs need sits behind a pointer;
+- the description stays short.
 
-Every item cites its evidence. While you're there, it acts on your answers right away. Its output language is Brazilian Portuguese; change one line to switch.
-
-A skill segue o guia [writing-for-agents](https://github.com/mattpocock/skills) do Matt Pocock: passos com critério de pronto, a página e as regras dela num arquivo carregado só quando o agente monta a página, e a descrição curta.
-
-Licença MIT.
+MIT License.
