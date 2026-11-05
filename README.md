@@ -13,7 +13,7 @@ It replies in your language, whatever language you write to it in.
 
 ## How it works
 
-1. **Absence window.** Starts at your last own message in the thread. Messages from other agents, schedules and delegates don't count as you being there. You can set it: `/here since Oct 28`, `/here 7d`.
+1. **Absence window.** Starts at your last own message in the thread. Messages from other agents, schedules and delegates don't count as you being there, and neither does an earlier `/here` you never answered: the new report reaches back over it, so nothing it raised gets lost. You can set it: `/here since Oct 28`, `/here 7d`.
 2. **Scope.** The thread's whole project, or what you ask for: `/here this thread only`, `/here everything`.
 3. **Gather, source by source, with evidence:**
    - threads waiting on you;

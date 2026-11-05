@@ -20,6 +20,7 @@ Every finding is an **item**: one line on the effect, its class (step 4), its da
 The window runs from the anchor to now.
 - A start the owner gave ("/here since Oct 28", "/here 7d") is the anchor.
 - Otherwise the anchor is their last own message in this thread before this request. Messages relayed by other agents, schedules or delegates do not count.
+- If that message is an earlier /here the owner never replied to, they left before reading it: use that /here's own anchor instead, as its report states it, so the window covers the unread report and everything after it. Repeat while the anchor lands on another unanswered /here.
 - With no earlier owner message, the anchor is the thread's start.
 
 Done when you can state the anchor as a date and time and where it came from.
@@ -33,7 +34,7 @@ Done when you can list the threads, repositories, tracker and schedules in scope
 ## 3. Gather
 
 Read each source your environment has, for the whole window:
-1. Threads paused on the owner: pending approvals, unanswered questions, snoozed or parked work.
+1. Threads paused on the owner: pending approvals, unanswered questions, snoozed or parked work. Also every *Needs you* item of earlier /here reports in this thread that the owner never answered or answered "later": recheck each, and keep it if still open, with the date it was first raised.
 2. The marks agents leave: `Decided for the owner:` and `Waiting on the owner:` (see "Leaving a trail" in the README). Search can miss threads, so source 3 still runs.
 3. Every thread in scope active since the anchor, read from the anchor on.
 4. Each repository: commits on the main branch, merged and open PRs, PRs awaiting the owner's review, failed CI, releases.
@@ -61,7 +62,7 @@ Done when every item has one class and every *Needs you* item has a recommendati
 
 Build the page from [`page-template.html`](page-template.html), look at it, fix what looks wrong, and show it.
 
-Below the page, the reply holds only the numbered *Needs you* list, one line each ending in your recommendation, and how to answer: "Answer by number, e.g. `1 ok, 2 b, 3 later`."
+Below the page, the reply holds only a first line with the window (anchor → now, with times), so a later /here can find it in the thread, then the numbered *Needs you* list, one line each ending in your recommendation, and how to answer: "Answer by number, e.g. `1 ok, 2 b, 3 later`."
 
 Done when every section shows with nothing clipped.
 
