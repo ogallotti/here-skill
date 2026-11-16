@@ -14,7 +14,7 @@ It replies in your language, whatever language you write to it in.
 ## How it works
 
 1. **Absence window.** Starts at your last own message in the thread. Messages from other agents, schedules and delegates don't count as you being there, and neither does an earlier `/here` you never answered: the new report reaches back over it, so nothing it raised gets lost. You can set it: `/here since Oct 28`, `/here 7d`.
-2. **Scope.** The thread's whole project, or what you ask for: `/here this thread only`, `/here everything`.
+2. **Scope.** In a coordinator thread (the project's Chief of Staff or orchestrator), the whole project. In any other thread, that thread's own work: itself, the threads it started and the threads it exchanged messages with, so unrelated decisions from elsewhere in the project stay out. Or what you ask for: `/here thread`, `/here project`, `/here everything`.
 3. **Gather, source by source, with evidence:**
    - threads waiting on you;
    - the marks agents left;
@@ -47,7 +47,7 @@ The owner is often away from a project for days while agents keep working. Leave
 - When work waits on them, write a line that starts with `Waiting on the owner:`: what is blocked and the exact answer or action you need. Keep working on everything that does not depend on it.
 ```
 
-The skill searches every thread in the project for those two marks.
+The skill searches the threads in scope for those two marks.
 
 ## Harnesses
 

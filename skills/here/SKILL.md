@@ -1,6 +1,6 @@
 ---
 name: here
-description: Owner check-in. Report everything since the owner's last visit and collect what only they can unblock. Use for /here, or when the owner asks what happened while they were away.
+description: Owner check-in. Report everything since the owner's last visit, for this thread's work or, in a coordinator thread, the whole project, and collect what only they can unblock. Use for /here, or when the owner asks what happened while they were away.
 ---
 
 # /here
@@ -27,13 +27,18 @@ Done when you can state the anchor as a date and time and where it came from.
 
 ## 2. Fix the scope
 
-The scope is the project this thread belongs to, unless the owner names another ("/here this thread only", "/here everything"). A thread with no project covers itself and the threads it started.
+The scope follows this thread's role, unless the owner names one ("/here thread", "/here project", "/here everything"):
+- **A coordinator thread covers its whole project.** A coordinator runs the project for the owner: its title or its own instructions make it the project's Chief of Staff, orchestrator or coordinator, and it hands work to the project's other threads.
+- **Any other thread covers its own work:** itself, the threads it started (delegates, subagents, the scheduled jobs it created) and the threads it exchanged messages with, read only for what touches that work. Repositories, tracker and memory narrow the same way: its branches and PRs, the issues it worked on, the pages it wrote. A decision from an unrelated thread of the same project stays out; it belongs in the coordinator's /here.
+- A thread with no project is never a coordinator.
 
-Done when you can list the threads, repositories, tracker and schedules in scope.
+When unsure, treat the thread as not a coordinator.
+
+Done when you can say which of the two scopes applies, and list its threads, repositories, tracker and schedules.
 
 ## 3. Gather
 
-Read each source your environment has, for the whole window:
+Read each source your environment has, for the whole window and only within the scope:
 1. Threads paused on the owner: pending approvals, unanswered questions, snoozed or parked work. Also every *Needs you* item of earlier /here reports in this thread that the owner never answered or answered "later": recheck each, and keep it if still open, with the date it was first raised.
 2. The marks agents leave: `Decided for the owner:` and `Waiting on the owner:` (see "Leaving a trail" in the README). Search can miss threads, so source 3 still runs.
 3. Every thread in scope active since the anchor, read from the anchor on.
@@ -62,7 +67,7 @@ Done when every item has one class and every *Needs you* item has a recommendati
 
 Build the page from [`page-template.html`](page-template.html), look at it, fix what looks wrong, and show it.
 
-Below the page, the reply holds only a first line with the window (anchor → now, with times), so a later /here can find it in the thread, then the numbered *Needs you* list, one line each ending in your recommendation, and how to answer: "Answer by number, e.g. `1 ok, 2 b, 3 later`."
+Below the page, the reply holds only a first line with the window (anchor → now, with times) and the scope (this thread's work, or the whole project), so a later /here can find it in the thread; in a thread scope, end that line with "`/here project` covers the whole project", then the numbered *Needs you* list, one line each ending in your recommendation, and how to answer: "Answer by number, e.g. `1 ok, 2 b, 3 later`."
 
 Done when every section shows with nothing clipped.
 
