@@ -69,6 +69,8 @@ Build the page from [`page-template.html`](page-template.html), look at it, fix 
 
 Below the page, the reply holds only a first line with the window (anchor → now, with times) and the scope (this thread's work, or the whole project), so a later /here can find it in the thread; in a thread scope, end that line with "`/here project` covers the whole project", then the numbered *Needs you* list, one line each ending in your recommendation, and how to answer: "Answer by number, e.g. `1 ok, 2 b, 3 later`."
 
+One numbering only. The page's *Needs you* and the reply's list are the same list: same items, same numbers, same order; write the reply's list from the page's items. Nothing else on the page or in the reply carries a number: other lists use bullets, and options inside an item use letters (a, b). Where a new /here carries over an earlier item, its first line says it replaces the earlier list.
+
 Done when every section shows with nothing clipped.
 
 ## 6. Unblock
@@ -78,6 +80,8 @@ Act on each answer as it arrives:
 - Another thread's: relay it to that thread, quoting the owner's words, and record it where that work is tracked.
 - *Owner-only action*: give the exact link and the shortest path, then confirm the result yourself.
 
-Confirm each in one line. Then offer the next most useful thing the owner could give before leaving.
+Confirm each in one line, by its number. Then offer the next most useful thing the owner could give before leaving.
+
+While any item is open, a new question to the owner in this thread takes the next free number (5 after 1–4) and never starts a list at 1. Read a number in the owner's answer against the latest list they saw; if it could mean two items, ask before acting.
 
 Done when every numbered item is acted on, relayed or deferred by the owner, and a last line says what still waits on them.
